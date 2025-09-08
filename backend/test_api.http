@@ -1,0 +1,29 @@
+###
+# @name Add new item
+POST http://localhost:3000/api/barang
+Content-Type: application/json
+
+{
+  "nama_barang": "Laptop Gaming",
+  "harga_beli": 10000000,
+  "harga_jual": 12500000,
+  "jumlah_stok": 5
+}
+
+###
+# @name Add another item
+POST http://localhost:3000/api/barang
+Content-Type: application/json
+
+{
+  "nama_barang": "Mouse Wireless",
+  "harga_beli": 150000,
+  "harga_jual": 200000,
+  "jumlah_stok": 50
+}
+
+###
+# @name Delete a specific item
+# Ganti 'ID_BARIS' dengan nomor baris yang ingin Anda hapus.
+# Anda bisa mendapatkan ID ini dari API Lihat Barang.
+DELETE http://localhost:3000/api/barang/2
