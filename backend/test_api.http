@@ -38,3 +38,24 @@ Content-Type: application/json
   "harga_jual": 16000000,
   "jumlah_stok": 10
 }
+
+###
+# @name Catat transaksi penjualan
+POST http://localhost:3000/api/transaksi
+Content-Type: application/json
+
+{
+  "nama_barang": "Laptop Gaming",
+  "jumlah_terjual": 1
+}
+
+
+###
+# @name Catat transaksi penjualan
+POST http://localhost:3000/api/transaksi
+Content-Type: application/json
+
+{
+  "nama_barang": "Mouse Wireless",
+  "jumlah_terjual": 5
+}
