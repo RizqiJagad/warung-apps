@@ -27,3 +27,14 @@ Content-Type: application/json
 # Ganti 'ID_BARIS' dengan nomor baris yang ingin Anda hapus.
 # Anda bisa mendapatkan ID ini dari API Lihat Barang.
 DELETE http://localhost:3000/api/barang/2
+
+###
+# @name Edit a specific item
+# Ganti 'ID_BARIS' dengan nomor baris yang ingin Anda edit
+PUT http://localhost:3000/api/barang/2
+Content-Type: application/json
+
+{
+  "harga_jual": 16000000,
+  "jumlah_stok": 10
+}

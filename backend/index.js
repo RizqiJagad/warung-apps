@@ -104,6 +104,37 @@ const main = async () => {
             }
         });
 
+        // --- API ENDPOINT UNTUK MENGEDIT BARANG ---
+        app.put('/api/barang/:id', async (req, res) => {
+            try {
+                const { id } = req.params;
+                const { nama_barang, harga_beli, harga_jual, jumlah_stok } = req.body;
+
+                // Cari baris yang akan diedit
+                const rows = await stokSheet.getRows();
+                const rowToEdit = rows.find(row => row.rowNumber === parseInt(id, 10));
+
+                if (!rowToEdit) {
+                    return res.status(404).json({ success: false, message: "Barang tidak ditemukan." });
+                }
+
+                // Perbarui nilai di setiap kolom
+                if (nama_barang) rowToEdit.set('nama_barang', nama_barang);
+                if (harga_beli) rowToEdit.set('harga_beli', parseFloat(harga_beli));
+                if (harga_jual) rowToEdit.set('harga_jual', parseFloat(harga_jual));
+                if (jumlah_stok) rowToEdit.set('jumlah_stok', parseInt(jumlah_stok, 10));
+
+                // Simpan perubahan ke Google Sheets
+                await rowToEdit.save();
+
+                res.status(200).json({ success: true, message: "Barang berhasil diperbarui." });
+
+            } catch (error) {
+                console.error('Error saat mengedit barang:', error);
+                res.status(500).json({ success: false, message: 'Gagal mengedit barang.', error: error.message });
+            }
+        });
+
         // --- HALAMAN UTAMA SERVER ---
         app.get('/', (req, res) => {
             res.send('🚀 Server back-end Warung App berjalan!');
