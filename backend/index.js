@@ -151,6 +151,53 @@ const main = async () => {
             }
         });
 
+        // --- API ENDPOINT UNTUK LAPORAN LABA ---
+        app.get('/api/laba/:periode', async (req, res) => {
+            try {
+                const { periode } = req.params;
+                const rows = await transaksiSheet.getRows();
+
+                // Validasi periode
+                if (!['harian', 'mingguan', 'bulanan'].includes(periode)) {
+                    return res.status(400).json({ success: false, message: "Periode tidak valid. Gunakan 'harian', 'mingguan', atau 'bulanan'." });
+                }
+
+                const data = {};
+
+                rows.forEach(row => {
+                    const tanggalStr = row.get('tanggal');
+                    const laba = parseFloat(row.get('laba'));
+
+                    if (!tanggalStr || isNaN(laba)) {
+                        return; // Lewati baris yang tidak valid
+                    }
+
+                    const tanggal = new Date(tanggalStr);
+                    let key = '';
+
+                    if (periode === 'harian') {
+                        key = tanggal.toISOString().split('T')[0];
+                    } else if (periode === 'mingguan') {
+                        const week = Math.floor(tanggal.getDate() / 7) + 1;
+                        key = `${tanggal.getFullYear()}-W${week}`;
+                    } else if (periode === 'bulanan') {
+                        key = `${tanggal.getFullYear()}-${tanggal.getMonth() + 1}`;
+                    }
+
+                    if (!data[key]) {
+                        data[key] = 0;
+                    }
+                    data[key] += laba;
+                });
+
+                res.status(200).json({ success: true, periode: periode, data: data });
+
+            } catch (error) {
+                console.error('Error saat membuat laporan laba:', error);
+                res.status(500).json({ success: false, message: 'Gagal mendapatkan laporan laba.', error: error.message });
+            }
+        });
+
 
         // --- Halaman Utama ---
         app.get('/', (req, res) => {
