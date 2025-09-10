@@ -34,7 +34,7 @@ const ProfitReports = () => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md mb-8">
       <h3 className="text-xl font-bold mb-4">Laporan Laba</h3>
-      <div className="flex gap-4 mb-4">
+      <div className="flex flex-wrap gap-4 mb-4">
         <button
           onClick={() => setPeriode('harian')}
           className={`px-4 py-2 rounded-md font-semibold ${periode === 'harian' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'}`}

@@ -35,7 +35,7 @@ const TransactionForm = ({ onRefreshItems }) => {
         nama_barang: '',
         jumlah_terjual: '',
       });
-      onRefreshItems(); // Refresh daftar barang
+      onRefreshItems();
     } catch (error) {
       console.error('Gagal mencatat transaksi:', error);
       alert('Gagal mencatat transaksi: ' + error.message);
@@ -43,35 +43,37 @@ const TransactionForm = ({ onRefreshItems }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md mb-8">
+    <div className="bg-white p-6 rounded-lg shadow-md mb-8">
       <h3 className="text-xl font-bold mb-4">Catat Transaksi Baru</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input
-          type="text"
-          name="nama_barang"
-          value={formData.nama_barang}
-          onChange={handleChange}
-          placeholder="Nama Barang"
-          className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        />
-        <input
-          type="number"
-          name="jumlah_terjual"
-          value={formData.jumlah_terjual}
-          onChange={handleChange}
-          placeholder="Jumlah Terjual"
-          className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        />
-      </div>
-      <button
-        type="submit"
-        className="mt-4 w-full bg-indigo-600 text-white p-2 rounded-md font-semibold hover:bg-indigo-700"
-      >
-        Catat Transaksi
-      </button>
-    </form>
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input
+            type="text"
+            name="nama_barang"
+            value={formData.nama_barang}
+            onChange={handleChange}
+            placeholder="Nama Barang"
+            className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <input
+            type="number"
+            name="jumlah_terjual"
+            value={formData.jumlah_terjual}
+            onChange={handleChange}
+            placeholder="Jumlah Terjual"
+            className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          className="mt-4 w-full bg-indigo-600 text-white p-2 rounded-md font-semibold hover:bg-indigo-700"
+        >
+          Catat Transaksi
+        </button>
+      </form>
+    </div>
   );
 };
 

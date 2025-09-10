@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-const ItemForm = ({ onAdd, onEdit, editingItem, setEditingItem }) => {
+const ItemForm = ({ onAdd, editingItem, setEditingItem }) => {
   const [formData, setFormData] = useState({
     nama_barang: '',
     harga_beli: '',
@@ -48,13 +48,14 @@ const ItemForm = ({ onAdd, onEdit, editingItem, setEditingItem }) => {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
       }
 
       await response.json();
       if (isEditing) {
         alert('Barang berhasil diperbarui!');
-        setEditingItem(null); // Keluar dari mode edit
+        setEditingItem(null);
       } else {
         alert('Barang berhasil ditambahkan!');
       }
@@ -66,10 +67,10 @@ const ItemForm = ({ onAdd, onEdit, editingItem, setEditingItem }) => {
         jumlah_stok: '',
       });
 
-      onAdd(); // Memuat ulang daftar barang
+      onAdd();
     } catch (error) {
       console.error('Error saat submit form:', error);
-      alert('Gagal menyimpan barang.');
+      alert('Gagal menyimpan barang: ' + error.message);
     }
   };
 
@@ -120,6 +121,15 @@ const ItemForm = ({ onAdd, onEdit, editingItem, setEditingItem }) => {
       >
         {editingItem ? 'Simpan Perubahan' : 'Tambah Barang'}
       </button>
+      {editingItem && (
+        <button
+          type="button"
+          onClick={() => setEditingItem(null)}
+          className="mt-2 w-full bg-gray-400 text-white p-2 rounded-md font-semibold hover:bg-gray-500"
+        >
+          Batal
+        </button>
+      )}
     </form>
   );
 };
