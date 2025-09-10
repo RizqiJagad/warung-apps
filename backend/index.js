@@ -5,12 +5,14 @@ import express from 'express';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
 import PDFDocument from 'pdfkit';
+import cors from 'cors';
 import table from 'pdfkit-table'; // PENTING: Tambahkan ini jika menggunakan pdfkit-table
 
 // --- INITIALIZATION ---
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(cors());
 app.use(express.json());
 
 const main = async () => {
