@@ -4,7 +4,10 @@ import 'dotenv/config';
 import express from 'express';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
+import PDFDocument from 'pdfkit';
+import table from 'pdfkit-table'; // PENTING: Tambahkan ini jika menggunakan pdfkit-table
 
+// --- INITIALIZATION ---
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -12,13 +15,13 @@ app.use(express.json());
 
 const main = async () => {
     try {
-        // --- Autentikasi Google Sheets ---
         const serviceAccountAuth = new JWT({
             email: process.env.GOOGLE_CLIENT_EMAIL,
             key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
             scopes: ['https://www.googleapis.com/auth/spreadsheets'],
         });
 
+        // ✅ Gunakan serviceAccountAuth saat menginisialisasi GoogleSpreadsheet
         const doc = new GoogleSpreadsheet(process.env.SPREADSHEET_ID, serviceAccountAuth);
         await doc.loadInfo();
         console.log(`✅ Terhubung ke Google Sheets: ${doc.title}`);
@@ -151,26 +154,58 @@ const main = async () => {
             }
         });
 
-        // --- API ENDPOINT UNTUK LAPORAN LABA ---
+        // --- Laporan Laba PDF (Rute spesifik) ---
+        app.get('/api/laba/pdf', async (req, res) => {
+            try {
+                const rows = await transaksiSheet.getRows();
+                const doc = new PDFDocument();
+                
+                res.setHeader('Content-Type', 'application/pdf');
+                res.setHeader('Content-Disposition', 'attachment; filename="laporan_laba.pdf"');
+                
+                doc.pipe(res);
+                doc.fontSize(25).text('Laporan Laba Warung App', { align: 'center' });
+                doc.moveDown();
+
+                const table = {
+                    headers: ['Tanggal', 'Nama Barang', 'Jumlah Terjual', 'Total Harga', 'Laba'],
+                    rows: rows.map(row => [
+                        row.get('tanggal'),
+                        row.get('nama_barang'),
+                        row.get('jumlah_terjual'),
+                        row.get('total_harga'),
+                        row.get('laba'),
+                    ]),
+                };
+
+                doc.table(table, {
+                    prepareHeader: () => doc.font('Helvetica-Bold'),
+                    prepareRow: () => doc.font('Helvetica'),
+                });
+
+                doc.end();
+
+            } catch (error) {
+                console.error('Error saat membuat PDF:', error);
+                res.status(500).json({ success: false, message: 'Gagal membuat laporan PDF.', error: error.message });
+            }
+        });
+
+        // --- Laporan Laba Harian, Mingguan, Bulanan (Rute umum) ---
         app.get('/api/laba/:periode', async (req, res) => {
             try {
                 const { periode } = req.params;
                 const rows = await transaksiSheet.getRows();
 
-                // Validasi periode
                 if (!['harian', 'mingguan', 'bulanan'].includes(periode)) {
                     return res.status(400).json({ success: false, message: "Periode tidak valid. Gunakan 'harian', 'mingguan', atau 'bulanan'." });
                 }
 
                 const data = {};
-
                 rows.forEach(row => {
                     const tanggalStr = row.get('tanggal');
                     const laba = parseFloat(row.get('laba'));
-
-                    if (!tanggalStr || isNaN(laba)) {
-                        return; // Lewati baris yang tidak valid
-                    }
+                    if (!tanggalStr || isNaN(laba)) return;
 
                     const tanggal = new Date(tanggalStr);
                     let key = '';
@@ -178,15 +213,17 @@ const main = async () => {
                     if (periode === 'harian') {
                         key = tanggal.toISOString().split('T')[0];
                     } else if (periode === 'mingguan') {
-                        const week = Math.floor(tanggal.getDate() / 7) + 1;
-                        key = `${tanggal.getFullYear()}-W${week}`;
+                        const d = new Date(tanggal);
+                        d.setHours(0, 0, 0, 0);
+                        d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
+                        const week1 = new Date(d.getFullYear(), 0, 4);
+                        const week = 1 + Math.round(((d.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+                        key = `${d.getFullYear()}-W${week}`;
                     } else if (periode === 'bulanan') {
                         key = `${tanggal.getFullYear()}-${tanggal.getMonth() + 1}`;
                     }
 
-                    if (!data[key]) {
-                        data[key] = 0;
-                    }
+                    if (!data[key]) data[key] = 0;
                     data[key] += laba;
                 });
 
@@ -197,7 +234,6 @@ const main = async () => {
                 res.status(500).json({ success: false, message: 'Gagal mendapatkan laporan laba.', error: error.message });
             }
         });
-
 
         // --- Halaman Utama ---
         app.get('/', (req, res) => {
