@@ -2,14 +2,19 @@
 
 import React, { useState } from 'react';
 import ItemList from './components/ItemList';
-import ItemForm from './components/ItemForm'; // <-- Impor komponen form
+import ItemForm from './components/ItemForm';
 import './index.css';
 
 function App() {
-  const [refreshKey, setRefreshKey] = useState(0); // <-- Tambahkan state ini
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [editingItem, setEditingItem] = useState(null); // <-- Tambahkan state ini
 
-  const handleItemAdded = () => {
-    setRefreshKey(prevKey => prevKey + 1); // <-- Ubah state untuk memicu refresh
+  const handleRefresh = () => {
+    setRefreshKey(prevKey => prevKey + 1);
+  };
+
+  const handleEdit = (item) => {
+    setEditingItem(item); // <-- Atur item yang akan diedit
   };
 
   return (
@@ -18,8 +23,12 @@ function App() {
         <h1 className="text-4xl font-bold text-gray-800">Warung App Dashboard</h1>
       </header>
       <main className="container mx-auto">
-        <ItemForm onAdd={handleItemAdded} /> {/* <-- Gunakan komponen form */}
-        <ItemList key={refreshKey} /> {/* <-- Tambahkan key untuk memicu refresh */}
+        <ItemForm
+          onAdd={handleRefresh}
+          editingItem={editingItem}
+          setEditingItem={setEditingItem}
+        />
+        <ItemList onRefresh={refreshKey} onEdit={handleEdit} />
       </main>
     </div>
   );

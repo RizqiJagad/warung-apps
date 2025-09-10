@@ -1,14 +1,27 @@
 // src/components/ItemForm.jsx
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const ItemForm = ({ onAdd }) => {
+const ItemForm = ({ onAdd, onEdit, editingItem, setEditingItem }) => {
   const [formData, setFormData] = useState({
     nama_barang: '',
     harga_beli: '',
     harga_jual: '',
     jumlah_stok: '',
   });
+
+  useEffect(() => {
+    if (editingItem) {
+      setFormData(editingItem);
+    } else {
+      setFormData({
+        nama_barang: '',
+        harga_beli: '',
+        harga_jual: '',
+        jumlah_stok: '',
+      });
+    }
+  }, [editingItem]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,9 +30,17 @@ const ItemForm = ({ onAdd }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const isEditing = !!editingItem;
+    const url = isEditing
+      ? `http://localhost:3000/api/barang/${editingItem.id}`
+      : 'http://localhost:3000/api/barang';
+
+    const method = isEditing ? 'PUT' : 'POST';
+
     try {
-      const response = await fetch('http://localhost:3000/api/barang', {
-        method: 'POST',
+      const response = await fetch(url, {
+        method: method,
         headers: {
           'Content-Type': 'application/json',
         },
@@ -31,23 +52,30 @@ const ItemForm = ({ onAdd }) => {
       }
 
       await response.json();
-      alert('Barang berhasil ditambahkan!');
+      if (isEditing) {
+        alert('Barang berhasil diperbarui!');
+        setEditingItem(null); // Keluar dari mode edit
+      } else {
+        alert('Barang berhasil ditambahkan!');
+      }
+
       setFormData({
         nama_barang: '',
         harga_beli: '',
         harga_jual: '',
         jumlah_stok: '',
       });
-      onAdd(); // Memanggil fungsi dari parent untuk refresh data
+
+      onAdd(); // Memuat ulang daftar barang
     } catch (error) {
-      console.error('Gagal menambah barang:', error);
-      alert('Gagal menambah barang.');
+      console.error('Error saat submit form:', error);
+      alert('Gagal menyimpan barang.');
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md mb-8">
-      <h3 className="text-xl font-bold mb-4">Tambah Barang Baru</h3>
+      <h3 className="text-xl font-bold mb-4">{editingItem ? 'Edit Barang' : 'Tambah Barang Baru'}</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <input
           type="text"
@@ -90,7 +118,7 @@ const ItemForm = ({ onAdd }) => {
         type="submit"
         className="mt-4 w-full bg-blue-600 text-white p-2 rounded-md font-semibold hover:bg-blue-700"
       >
-        Tambah Barang
+        {editingItem ? 'Simpan Perubahan' : 'Tambah Barang'}
       </button>
     </form>
   );
