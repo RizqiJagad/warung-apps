@@ -3,18 +3,19 @@
 import React, { useState } from 'react';
 import ItemList from './components/ItemList';
 import ItemForm from './components/ItemForm';
+import TransactionForm from './components/TransactionForm'; // <-- Impor komponen form transaksi
 import './index.css';
 
 function App() {
   const [refreshKey, setRefreshKey] = useState(0);
-  const [editingItem, setEditingItem] = useState(null); // <-- Tambahkan state ini
+  const [editingItem, setEditingItem] = useState(null);
 
   const handleRefresh = () => {
     setRefreshKey(prevKey => prevKey + 1);
   };
 
   const handleEdit = (item) => {
-    setEditingItem(item); // <-- Atur item yang akan diedit
+    setEditingItem(item);
   };
 
   return (
@@ -28,6 +29,7 @@ function App() {
           editingItem={editingItem}
           setEditingItem={setEditingItem}
         />
+        <TransactionForm onRefreshItems={handleRefresh} /> {/* <-- Tambahkan form transaksi */}
         <ItemList onRefresh={refreshKey} onEdit={handleEdit} />
       </main>
     </div>
