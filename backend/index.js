@@ -4,15 +4,15 @@ import 'dotenv/config';
 import express from 'express';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
-import PDFDocument from 'pdfkit';
+import PDFDocument from 'pdfkit'; // <-- PERBAIKAN: Impor dari 'pdfkit'
+import 'pdfkit-table'; // <-- PERBAIKAN: Impor ekstensi secara terpisah
 import cors from 'cors';
-import table from 'pdfkit-table'; // PENTING: Tambahkan ini jika menggunakan pdfkit-table
 
 // --- INITIALIZATION ---
 const app = express();
+app.use(cors());
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
 app.use(express.json());
 
 const main = async () => {
@@ -23,7 +23,6 @@ const main = async () => {
             scopes: ['https://www.googleapis.com/auth/spreadsheets'],
         });
 
-        // ✅ Gunakan serviceAccountAuth saat menginisialisasi GoogleSpreadsheet
         const doc = new GoogleSpreadsheet(process.env.SPREADSHEET_ID, serviceAccountAuth);
         await doc.loadInfo();
         console.log(`✅ Terhubung ke Google Sheets: ${doc.title}`);
@@ -156,33 +155,56 @@ const main = async () => {
             }
         });
 
-        // --- Laporan Laba PDF (Rute spesifik) ---
+           // --- Laporan PDF (Rute spesifik) ---
         app.get('/api/laba/pdf', async (req, res) => {
             try {
                 const rows = await transaksiSheet.getRows();
-                const doc = new PDFDocument();
-                
+                const doc = new PDFDocument({ margin: 30, size: 'A4' });
+
                 res.setHeader('Content-Type', 'application/pdf');
                 res.setHeader('Content-Disposition', 'attachment; filename="laporan_laba.pdf"');
-                
+
                 doc.pipe(res);
-                doc.fontSize(25).text('Laporan Laba Warung App', { align: 'center' });
+                doc.fontSize(20).text('Laporan Laba Warung App', { align: 'center' });
+                doc.moveDown(2);
+
+                // Buat header tabel
+                const tableHeaders = ['Tanggal', 'Nama Barang', 'Jumlah Terjual', 'Total Harga', 'Laba'];
+                const startY = doc.y;
+                let startX = doc.x;
+                const cellPadding = 5;
+                const columnWidth = 100;
+
+                doc.font('Helvetica-Bold').fontSize(10);
+                tableHeaders.forEach((header, i) => {
+                    doc.text(header, startX + (i * columnWidth), startY, {
+                        width: columnWidth,
+                        align: 'left',
+                        lineBreak: false
+                    });
+                });
                 doc.moveDown();
 
-                const table = {
-                    headers: ['Tanggal', 'Nama Barang', 'Jumlah Terjual', 'Total Harga', 'Laba'],
-                    rows: rows.map(row => [
-                        row.get('tanggal'),
-                        row.get('nama_barang'),
-                        row.get('jumlah_terjual'),
-                        row.get('total_harga'),
-                        row.get('laba'),
-                    ]),
-                };
+                // Buat baris data
+                doc.font('Helvetica').fontSize(10);
+                let currentY = doc.y;
 
-                doc.table(table, {
-                    prepareHeader: () => doc.font('Helvetica-Bold'),
-                    prepareRow: () => doc.font('Helvetica'),
+                rows.forEach(row => {
+                    const rowData = [
+                        row.get('tanggal') || '',
+                        row.get('nama_barang') || '',
+                        row.get('jumlah_terjual') || '0',
+                        row.get('total_harga') || '0',
+                        row.get('laba') || '0',
+                    ];
+
+                    doc.text(rowData[0], startX, currentY);
+                    doc.text(rowData[1], startX + columnWidth, currentY);
+                    doc.text(rowData[2], startX + (2 * columnWidth), currentY);
+                    doc.text(rowData[3], startX + (3 * columnWidth), currentY);
+                    doc.text(rowData[4], startX + (4 * columnWidth), currentY);
+
+                    currentY += 20; // Pindah ke baris berikutnya
                 });
 
                 doc.end();
@@ -246,7 +268,6 @@ const main = async () => {
         app.listen(PORT, () => {
             console.log(`Server berjalan di http://localhost:${PORT}`);
         });
-
     } catch (error) {
         console.error('❌ Gagal terhubung ke Google Sheets:', error);
         process.exit(1);

@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import ItemList from './components/ItemList';
 import ItemForm from './components/ItemForm';
-import TransactionForm from './components/TransactionForm'; // <-- Impor komponen form transaksi
+import TransactionForm from './components/TransactionForm';
+import ProfitReports from './components/ProfitReports'; // <-- Impor komponen laporan
 import './index.css';
 
 function App() {
@@ -29,7 +30,8 @@ function App() {
           editingItem={editingItem}
           setEditingItem={setEditingItem}
         />
-        <TransactionForm onRefreshItems={handleRefresh} /> {/* <-- Tambahkan form transaksi */}
+        <TransactionForm onRefreshItems={handleRefresh} />
+        <ProfitReports /> {/* <-- Tambahkan komponen laporan */}
         <ItemList onRefresh={refreshKey} onEdit={handleEdit} />
       </main>
     </div>
