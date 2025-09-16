@@ -5,7 +5,7 @@
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3-blue?logo=tailwind-css)  
 ![Express](https://img.shields.io/badge/Express.js-4-black?logo=express)  
 ![Google Sheets](https://img.shields.io/badge/Google%20Sheets-API-green?logo=googlesheets)  
-![License](https://img.shields.io/badge/License-MIT-yellow)  
+
 
 ---
 
