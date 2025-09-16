@@ -62,3 +62,47 @@ npm install
 # Instal dependensi frontend
 cd ../frontend
 npm install
+```
+
+### 2. Konfigurasi Google Sheets API
+- Buat Google Sheets baru (misalnya Warung App Database) dan tambahkan dua sheet:
+    - stok_barang
+    - rekap_transaksi
+- Di Google Cloud Console, buat Service Account dan unduh file JSON kredensial.
+- Berikan akses Editor ke Service Account tersebut pada Google Sheets Anda.
+- Salin client_email dan private_key dari file JSON ke file .env di folder backend.
+
+#### Contoh isi .env:
+```bash
+SHEET_ID=ID_GOOGLE_SHEET_ANDA
+CLIENT_EMAIL=xxxx@xxxx.iam.gserviceaccount.com
+PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nXXXX\n-----END PRIVATE KEY-----\n"
+```
+### 3. Menjalankan Aplikasi
+```bash
+# Terminal 1: Jalankan Backend
+cd backend
+node --openssl-legacy-provider index.js
+
+# Terminal 2: Jalankan Frontend
+cd ../frontend
+npm run dev
+```
+###  Penggunaan API
+| Metode | Endpoint           | Deskripsi                                |
+| ------ | ------------------ | ---------------------------------------- |
+| GET    | `/api/barang`      | Mengambil daftar semua barang.           |
+| POST   | `/api/barang`      | Menambah barang baru.                    |
+| PUT    | `/api/barang/:id`  | Mengedit data barang.                    |
+| DELETE | `/api/barang/:id`  | Menghapus barang.                        |
+| POST   | `/api/transaksi`   | Mencatat transaksi penjualan.            |
+| GET    | `/api/laba/harian` | Mendapatkan laporan laba harian.         |
+| GET    | `/api/laba/pdf`    | Mengunduh laporan laba dalam format PDF. |
+
+### Kontributor
+- Dikembangkan oleh Taqiy Rizqi Jagad Samudra
+- Email: taqiyrizqijagad@gmail.com
+- GitHub: RizqiJagad
+
+
+
