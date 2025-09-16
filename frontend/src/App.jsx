@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import ItemList from './components/ItemList';
-import ItemForm from './components/ItemForm';
-import TransactionForm from './components/TransactionForm';
 import ProfitReports from './components/ProfitReports';
+import FastTransactions from './components/FastTransactions';
+import LatestActivity from './components/LatestActivity';
 import './index.css';
 
 function App() {
@@ -20,18 +20,23 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      <header className="text-center my-8">
-        <h1 className="text-4xl font-bold text-gray-800">Warung App Dashboard</h1>
+    <div className="min-h-screen bg-gray-100 p-4 font-sans">
+      <header className="bg-white rounded-xl shadow-lg p-6 mb-8 text-center md:text-left">
+        <h1 className="text-4xl font-bold text-gray-800">Dashboard Analitik Usaha</h1>
       </header>
-      <main className="container mx-auto p-2 md:p-4"> {/* <-- Perubahan di sini */}
-        <ItemForm
-          onAdd={handleRefresh}
-          editingItem={editingItem}
-          setEditingItem={setEditingItem}
-        />
-        <TransactionForm onRefreshItems={handleRefresh} />
-        <ProfitReports />
+      <main className="container mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+          <div className="md:col-span-2">
+            <div className="bg-white rounded-xl shadow-lg p-8">
+              <h3 className="text-xl font-bold text-gray-800 mb-4">Ringkasan Laba</h3>
+              <ProfitReports />
+              <FastTransactions onAdd={handleRefresh} editingItem={editingItem} setEditingItem={setEditingItem} /> {/* <-- Menambahkan kembali FastTransactions */}
+            </div>
+          </div>
+          <div className="bg-white rounded-xl shadow-lg p-8">
+            <LatestActivity onRefresh={refreshKey} /> {/* <-- Terbaru */}
+          </div>
+        </div>
         <ItemList onRefresh={refreshKey} onEdit={handleEdit} />
       </main>
     </div>

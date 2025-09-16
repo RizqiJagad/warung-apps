@@ -75,62 +75,64 @@ const ItemForm = ({ onAdd, editingItem, setEditingItem }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md mb-8">
+    <div className="bg-white p-6 rounded-xl shadow-lg"> {/* <-- Perubahan di sini */}
       <h3 className="text-xl font-bold mb-4">{editingItem ? 'Edit Barang' : 'Tambah Barang Baru'}</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <input
-          type="text"
-          name="nama_barang"
-          value={formData.nama_barang}
-          onChange={handleChange}
-          placeholder="Nama Barang"
-          className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        />
-        <input
-          type="number"
-          name="harga_beli"
-          value={formData.harga_beli}
-          onChange={handleChange}
-          placeholder="Harga Beli"
-          className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        />
-        <input
-          type="number"
-          name="harga_jual"
-          value={formData.harga_jual}
-          onChange={handleChange}
-          placeholder="Harga Jual"
-          className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        />
-        <input
-          type="number"
-          name="jumlah_stok"
-          value={formData.jumlah_stok}
-          onChange={handleChange}
-          placeholder="Jumlah Stok"
-          className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required
-        />
-      </div>
-      <button
-        type="submit"
-        className="mt-4 w-full bg-blue-600 text-white p-2 rounded-md font-semibold hover:bg-blue-700"
-      >
-        {editingItem ? 'Simpan Perubahan' : 'Tambah Barang'}
-      </button>
-      {editingItem && (
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <input
+            type="text"
+            name="nama_barang"
+            value={formData.nama_barang}
+            onChange={handleChange}
+            placeholder="Nama Barang"
+            className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <input
+            type="number"
+            name="harga_beli"
+            value={formData.harga_beli}
+            onChange={handleChange}
+            placeholder="Harga Beli"
+            className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <input
+            type="number"
+            name="harga_jual"
+            value={formData.harga_jual}
+            onChange={handleChange}
+            placeholder="Harga Jual"
+            className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+          <input
+            type="number"
+            name="jumlah_stok"
+            value={formData.jumlah_stok}
+            onChange={handleChange}
+            placeholder="Jumlah Stok"
+            className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
         <button
-          type="button"
-          onClick={() => setEditingItem(null)}
-          className="mt-2 w-full bg-gray-400 text-white p-2 rounded-md font-semibold hover:bg-gray-500"
+          type="submit"
+          className="mt-4 w-full bg-blue-600 text-white p-2 rounded-md font-semibold hover:bg-blue-700"
         >
-          Batal
+          {editingItem ? 'Simpan Perubahan' : 'Tambah Barang'}
         </button>
-      )}
-    </form>
+        {editingItem && (
+          <button
+            type="button"
+            onClick={() => setEditingItem(null)}
+            className="mt-2 w-full bg-gray-400 text-white p-2 rounded-md font-semibold hover:bg-gray-500"
+          >
+            Batal
+          </button>
+        )}
+      </form>
+    </div>
   );
 };
 

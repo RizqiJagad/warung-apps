@@ -57,38 +57,38 @@ const ItemList = ({ onRefresh, onEdit }) => {
   }
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="bg-white p-8 rounded-xl shadow-lg mt-8">
       <h2 className="text-2xl font-bold mb-4">Daftar Barang</h2>
-      <div className="overflow-x-auto"> {/* <-- Tambahkan ini */}
-        <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-          <thead className="bg-gray-200">
+      <div className="overflow-x-auto">
+        <table className="min-w-full">
+          <thead className="bg-gray-100">
             <tr>
-              <th className="py-2 px-4 text-left text-sm font-semibold text-gray-700">Nama Barang</th>
-              <th className="py-2 px-4 text-left text-sm font-semibold text-gray-700">Harga Beli</th>
-              <th className="py-2 px-4 text-left text-sm font-semibold text-gray-700">Harga Jual</th>
-              <th className="py-2 px-4 text-left text-sm font-semibold text-gray-700">Stok</th>
-              <th className="py-2 px-4 text-left text-sm font-semibold text-gray-700">Aksi</th>
+              <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Nama Barang</th>
+              <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Harga Beli</th>
+              <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Harga Jual</th>
+              <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Stok</th>
+              <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Aksi</th>
             </tr>
           </thead>
           <tbody>
             {items.map(item => (
-              <tr key={item.id} className="border-b hover:bg-gray-100">
-                <td className="py-2 px-4 text-sm text-gray-800">{item.nama_barang}</td>
-                <td className="py-2 px-4 text-sm text-gray-800">Rp {item.harga_beli}</td>
-                <td className="py-2 px-4 text-sm text-gray-800">Rp {item.harga_jual}</td>
-                <td className="py-2 px-4 text-sm text-gray-800">{item.jumlah_stok}</td>
-                <td className="py-2 px-4 text-sm text-gray-800">
-                  <button
-                    onClick={() => handleDelete(item.id)}
-                    className="bg-red-500 text-white p-1 rounded-md text-xs font-semibold hover:bg-red-600 mr-2"
-                  >
-                    Hapus
-                  </button>
+              <tr key={item.id} className="border-b border-gray-200 last:border-b-0 hover:bg-gray-50">
+                <td className="py-3 px-4 text-sm text-gray-800">{item.nama_barang}</td>
+                <td className="py-3 px-4 text-sm text-gray-800">Rp {item.harga_beli}</td>
+                <td className="py-3 px-4 text-sm text-gray-800">Rp {item.harga_jual}</td>
+                <td className="py-3 px-4 text-sm text-gray-800">{item.jumlah_stok}</td>
+                <td className="py-3 px-4 text-sm text-gray-800">
                   <button
                     onClick={() => onEdit(item)}
-                    className="bg-green-500 text-white p-1 rounded-md text-xs font-semibold hover:bg-green-600"
+                    className="bg-blue-600 text-white p-2 rounded-md text-xs font-semibold hover:bg-blue-700 mr-2"
                   >
                     Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    className="bg-red-500 text-white p-2 rounded-md text-xs font-semibold hover:bg-red-600"
+                  >
+                    Hapus
                   </button>
                 </td>
               </tr>

@@ -1,6 +1,18 @@
 // src/components/ProfitReports.jsx
 
 import React, { useState, useEffect } from 'react';
+import { Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const ProfitReports = () => {
   const [report, setReport] = useState({});
@@ -31,48 +43,64 @@ const ProfitReports = () => {
     window.open(`http://localhost:3000/api/laba/pdf`, '_blank');
   };
 
-  return (
-    <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-      <h3 className="text-xl font-bold mb-4">Laporan Laba</h3>
-      <div className="flex flex-wrap gap-4 mb-4">
-        <button
-          onClick={() => setPeriode('harian')}
-          className={`px-4 py-2 rounded-md font-semibold ${periode === 'harian' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'}`}
-        >
-          Harian
-        </button>
-        <button
-          onClick={() => setPeriode('mingguan')}
-          className={`px-4 py-2 rounded-md font-semibold ${periode === 'mingguan' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'}`}
-        >
-          Mingguan
-        </button>
-        <button
-          onClick={() => setPeriode('bulanan')}
-          className={`px-4 py-2 rounded-md font-semibold ${periode === 'bulanan' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'}`}
-        >
-          Bulanan
-        </button>
-      </div>
-      <button
-        onClick={handleDownloadPdf}
-        className="px-4 py-2 rounded-md font-semibold bg-green-600 text-white hover:bg-green-700"
-      >
-        Unduh Laporan PDF
-      </button>
+  const chartData = {
+    labels: Object.keys(report),
+    datasets: [{
+      label: `Laba ${periode}`,
+      data: Object.values(report),
+      backgroundColor: '#3B82F6',
+    }],
+  };
 
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: 'top' },
+      title: { display: true, text: `Laba (${periode})` },
+    },
+    scales: {
+        y: {
+            beginAtZero: true,
+        },
+    },
+  };
+
+  return (
+    <div className="mb-8">
       {loading ? (
         <div className="mt-4">Memuat laporan...</div>
       ) : (
         <div className="mt-4">
-          <h4 className="text-lg font-bold">Total Laba ({periode})</h4>
-          <ul>
-            {Object.entries(report).map(([key, value]) => (
-              <li key={key}>
-                <strong>{key}:</strong> Rp {value}
-              </li>
-            ))}
-          </ul>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4 md:gap-2"> {/* Perbaikan */}
+            <h4 className="text-lg font-bold">Total Laba ({periode})</h4>
+            <div className="flex flex-wrap gap-2"> {/* Perbaikan */}
+              <button
+                onClick={() => setPeriode('harian')}
+                className={`px-3 py-1 text-sm rounded-md font-semibold transition-colors duration-200 ${periode === 'harian' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
+              >
+                Harian
+              </button>
+              <button
+                onClick={() => setPeriode('mingguan')}
+                className={`px-3 py-1 text-sm rounded-md font-semibold transition-colors duration-200 ${periode === 'mingguan' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
+              >
+                Mingguan
+              </button>
+              <button
+                onClick={() => setPeriode('bulanan')}
+                className={`px-3 py-1 text-sm rounded-md font-semibold transition-colors duration-200 ${periode === 'bulanan' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800 hover:bg-gray-300'}`}
+              >
+                Bulanan
+              </button>
+            </div>
+            <button
+              onClick={handleDownloadPdf}
+              className="px-4 py-2 rounded-md font-semibold bg-green-600 text-white hover:bg-green-700 transition-colors duration-200"
+            >
+              Unduh Laporan PDF
+            </button>
+          </div>
+          <Bar options={chartOptions} data={chartData} />
         </div>
       )}
     </div>
